@@ -134,6 +134,7 @@
         await webcam.setup(); // Request access to the webcam
         await webcam.play();
         window.requestAnimationFrame(loop);
+        webcamContainer.innerHTML = "";
 
         // Append webcam canvas only if it doesn't already exist
         const webcamContainer = document.getElementById("webcam-container");
