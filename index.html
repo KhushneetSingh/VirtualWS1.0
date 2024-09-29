@@ -5,96 +5,102 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teachable Machine Image Model</title>
     <style>
+        /* Font and Color */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(to right, #1e3c72, #2a5298);
-            color: #fff;
+            background-color: #e0f7fa;
+            color: #333;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
-            overflow: hidden;
+            padding: 0;
         }
 
+        /* Container */
         .container {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
+            background: #ffffff;
             border-radius: 15px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-            padding: 30px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            padding: 40px;
             max-width: 500px;
             width: 100%;
             text-align: center;
             transition: all 0.3s ease;
         }
 
+        /* Hover effect for container */
         .container:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
         }
 
+        /* Headings */
         h1 {
             font-size: 2em;
-            color: #fff;
+            color: #00796b;
             margin-bottom: 25px;
         }
 
+        /* Buttons */
         button, .button-link {
-            background-color: #4CAF50;
-            color: #fff;
+            background-color: #00796b;
+            color: #ffffff;
             padding: 12px 25px;
             border: none;
-            border-radius: 50px;
+            border-radius: 25px;
             font-size: 16px;
             cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
-
-        button:hover, .button-link:hover {
-            background-color: #43a047;
-            transform: translateY(-5px);
-        }
-
-        .button-link {
+            transition: background-color 0.3s ease;
             text-decoration: none;
-            margin-top: 10px;
             display: inline-block;
+            margin-top: 20px;
         }
 
+        /* Button hover effect */
+        button:hover, .button-link:hover {
+            background-color: #004d40;
+        }
+
+        /* Webcam and Label Containers */
         #webcam-container {
-            margin: 20px 0;
-            display: flex;
-            justify-content: center;
+            margin: 30px 0;
         }
 
         #webcam-container canvas {
-            border-radius: 15px;
-            border: 3px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            border: 2px solid #00796b;
         }
 
+        /* Labels */
         #label-container {
             margin-top: 20px;
         }
 
         #label-container div {
-            font-size: 1em;
-            margin: 10px 0;
+            font-size: 1.2em;
+            margin: 8px 0;
             padding: 12px;
-            background-color: rgba(255, 255, 255, 0.2);
-            border-radius: 50px;
+            background-color: #e0f2f1;
+            border-radius: 8px;
+            color: #004d40;
             font-weight: 600;
-            color: #fff;
         }
 
-        @media (max-width: 768px) {
+        /* Media Queries for Responsiveness */
+        @media only screen and (max-width: 600px) {
             .container {
                 padding: 20px;
             }
 
+            h1 {
+                font-size: 1.6em;
+            }
+
             button, .button-link {
-                width: 100%;
-                padding: 10px;
+                font-size: 14px;
+                padding: 10px 20px;
             }
         }
     </style>
@@ -117,13 +123,18 @@
     const URL = "https://teachablemachine.withgoogle.com/models/DXbwDydIK/";
 
     let model, webcam, labelContainer, maxPredictions;
+    let webcamStarted = false; // Flag to prevent multiple initializations
 
     // Load the image model and setup the webcam
     async function init() {
+        // Prevent re-initialization
+        if (webcamStarted) return;
+        webcamStarted = true;
+
         const modelURL = URL + "model.json";
         const metadataURL = URL + "metadata.json";
 
-        // load the model and metadata
+        // Load the model and metadata
         model = await tmImage.load(modelURL, metadataURL);
         maxPredictions = model.getTotalClasses();
 
@@ -134,8 +145,13 @@
         await webcam.play();
         window.requestAnimationFrame(loop);
 
-        // append webcam canvas
-        document.getElementById("webcam-container").appendChild(webcam.canvas);
+        // Check if a webcam canvas already exists to prevent duplicate canvases
+        const webcamContainer = document.getElementById("webcam-container");
+        if (!webcamContainer.querySelector("canvas")) {
+            webcamContainer.appendChild(webcam.canvas);
+        }
+
+        // Initialize label container
         labelContainer = document.getElementById("label-container");
         for (let i = 0; i < maxPredictions; i++) { // and class labels
             labelContainer.appendChild(document.createElement("div"));
