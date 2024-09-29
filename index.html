@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teachable Machine Image Model</title>
     <style>
-        /* Font and Color */
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
         body {
             font-family: 'Poppins', sans-serif;
@@ -19,7 +18,6 @@
             padding: 0;
         }
 
-        /* Container */
         .container {
             background: #ffffff;
             border-radius: 15px;
@@ -31,19 +29,16 @@
             transition: all 0.3s ease;
         }
 
-        /* Hover effect for container */
         .container:hover {
             box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
         }
 
-        /* Headings */
         h1 {
             font-size: 2em;
             color: #00796b;
             margin-bottom: 25px;
         }
 
-        /* Buttons */
         button, .button-link {
             background-color: #00796b;
             color: #ffffff;
@@ -58,12 +53,10 @@
             margin-top: 20px;
         }
 
-        /* Button hover effect */
         button:hover, .button-link:hover {
             background-color: #004d40;
         }
 
-        /* Webcam and Label Containers */
         #webcam-container {
             margin: 30px 0;
         }
@@ -73,7 +66,6 @@
             border: 2px solid #00796b;
         }
 
-        /* Labels */
         #label-container {
             margin-top: 20px;
         }
@@ -88,7 +80,6 @@
             font-weight: 600;
         }
 
-        /* Media Queries for Responsiveness */
         @media only screen and (max-width: 600px) {
             .container {
                 padding: 20px;
@@ -123,12 +114,11 @@
     const URL = "https://teachablemachine.withgoogle.com/models/DXbwDydIK/";
 
     let model, webcam, labelContainer, maxPredictions;
-    let webcamStarted = false; // Flag to prevent multiple initializations
+    let webcamStarted = false; // Prevents multiple webcam initializations
 
     // Load the image model and setup the webcam
     async function init() {
-        // Prevent re-initialization
-        if (webcamStarted) return;
+        if (webcamStarted) return; // Prevent re-initialization
         webcamStarted = true;
 
         const modelURL = URL + "model.json";
@@ -139,13 +129,13 @@
         maxPredictions = model.getTotalClasses();
 
         // Setup the webcam
-        const flip = true; // flip the webcam for better orientation
+        const flip = true; // Flip the webcam for better orientation
         webcam = new tmImage.Webcam(320, 320, flip); // width, height, flip
-        await webcam.setup(); // request access to the webcam
+        await webcam.setup(); // Request access to the webcam
         await webcam.play();
         window.requestAnimationFrame(loop);
 
-        // Check if a webcam canvas already exists to prevent duplicate canvases
+        // Append webcam canvas only if it doesn't already exist
         const webcamContainer = document.getElementById("webcam-container");
         if (!webcamContainer.querySelector("canvas")) {
             webcamContainer.appendChild(webcam.canvas);
@@ -153,14 +143,14 @@
 
         // Initialize label container
         labelContainer = document.getElementById("label-container");
-        for (let i = 0; i < maxPredictions; i++) { // and class labels
+        for (let i = 0; i < maxPredictions; i++) {
             labelContainer.appendChild(document.createElement("div"));
         }
     }
 
     // Update loop
     async function loop() {
-        webcam.update(); // update the webcam frame
+        webcam.update(); // Update the webcam frame
         await predict();
         window.requestAnimationFrame(loop);
     }
